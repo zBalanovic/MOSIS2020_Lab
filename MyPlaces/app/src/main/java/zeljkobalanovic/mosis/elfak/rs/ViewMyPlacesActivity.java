@@ -1,6 +1,5 @@
 package zeljkobalanovic.mosis.elfak.rs;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,28 +9,49 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-
-
+public class ViewMyPlacesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_view_my_places);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        int position = -1;
+        try{
+            Intent listIntent = getIntent();
+            Bundle positionBundle = listIntent.getExtras();
+            position = positionBundle.getInt("position");
+        }
+        catch (Exception e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        if(position >= 0){
+            MyPlace place = MyPlacesData.getInstance().getPlace(position);
+            TextView twName = (TextView)findViewById(R.id.viewmyplace_name_text);
+            twName.setText(place.getName());
+            TextView twDesc = (TextView)findViewById(R.id.viewmyplace_desc_text);
+            twDesc.setText(place.getDescription());
+        }
+
+        final Button finishedButton = (Button)findViewById(R.id.viewmyplace_finished_button);
+        finishedButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, EditMyPlaceActivity.class);
-                startActivityForResult(i, NEW_PLACE);
+            public void onClick(View v) {
+                finish();
             }
         });
     }
@@ -39,11 +59,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_view_my_place, menu);
         return true;
     }
-
-    static int NEW_PLACE = 1;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -55,25 +73,17 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if(id == R.id.show_map_item) {
             Toast.makeText(this, "Show Map!", Toast.LENGTH_SHORT).show();
-        } else if(id == R.id.new_place_item){
-            Intent i = new Intent(this, EditMyPlaceActivity.class);
-            startActivityForResult(i, NEW_PLACE);
         } else if(id == R.id.my_places_list_item){
             Intent i = new Intent(this, MyPlacesList.class);
             startActivity(i);
         } else if(id == R.id.about_item){
             Intent i = new Intent(this, About.class);
             startActivity(i);
+        } else if(id == android.R.id.home){
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
-            Toast.makeText(this, "New Place Added", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
