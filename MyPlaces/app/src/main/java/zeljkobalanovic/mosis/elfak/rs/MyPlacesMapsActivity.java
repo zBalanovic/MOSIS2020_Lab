@@ -177,6 +177,9 @@ public class MyPlacesMapsActivity extends AppCompatActivity {
                 selCoorsEnabled = true;
 
                 Toast.makeText(this, "Select coordinates", Toast.LENGTH_SHORT).show();
+            } else if(id == 2){
+                setResult(Activity.RESULT_CANCELED);
+                finish();
             }
         } else if(id == 2){
             setResult(Activity.RESULT_CANCELED);
