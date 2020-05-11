@@ -10,9 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MyPlacesMapsActivity"
+            android:label="@string/title_activity_my_places_maps"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".ViewMyPlacesActivity"
             android:label="@string/title_activity_view_my_places"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EditMyPlaceActivity"
             android:label="@string/title_activity_edit_my_place"
@@ -36,5 +40,7 @@
             android:label="About"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
     </application>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

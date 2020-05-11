@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.strictmode.IntentReceiverLeakedViolation;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if(id == R.id.show_map_item) {
-            Toast.makeText(this, "Show Map!", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, MyPlacesMapsActivity.class);
+            i.putExtra("state", MyPlacesMapsActivity.SHOW_MAP);
+            startActivity(i);
         } else if(id == R.id.new_place_item){
             Intent i = new Intent(this, EditMyPlaceActivity.class);
             startActivityForResult(i, NEW_PLACE);

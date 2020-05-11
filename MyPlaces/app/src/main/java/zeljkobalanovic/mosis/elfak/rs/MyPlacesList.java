@@ -20,46 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class MyPlacesList extends AppCompatActivity {
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_my_places_list, menu);
-        return true;
-    }
-
     static int NEW_PLACE = 1;
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.show_map_item) {
-            Toast.makeText(this, "Show Map!", Toast.LENGTH_SHORT).show();
-        } else if(id == R.id.new_place_item){
-            Intent i = new Intent(this, EditMyPlaceActivity.class);
-            startActivityForResult(i, NEW_PLACE);
-        } else if(id == R.id.about_item){
-            Intent i = new Intent(this, About.class);
-            startActivity(i);
-        }
-        else if(id == android.R.id.home){
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
-            ListView myPlacesList = (ListView)findViewById(R.id.my_places_list);
-            myPlacesList.setAdapter(new ArrayAdapter<MyPlace>(this, android.R.layout.simple_list_item_1,MyPlacesData.getInstance().getMyPlaces()));
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +61,51 @@ public class MyPlacesList extends AppCompatActivity {
                 menu.setHeaderTitle(place.getName());
                 menu.add(0,1,1, "View place");
                 menu.add(0, 2, 2, "Edit place");
+                menu.add(0, 3, 3, "Delete place");
+                menu.add(0, 4, 4, "Show on Map");
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_my_places_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if(id == R.id.show_map_item) {
+            Intent i = new Intent(this, MyPlacesMapsActivity.class);
+            i.putExtra("state", MyPlacesMapsActivity.SHOW_MAP);
+            startActivity(i);
+        } else if(id == R.id.new_place_item){
+            Intent i = new Intent(this, EditMyPlaceActivity.class);
+            startActivityForResult(i, NEW_PLACE);
+        } else if(id == R.id.about_item){
+            Intent i = new Intent(this, About.class);
+            startActivity(i);
+        }
+        else if(id == android.R.id.home){
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            ListView myPlacesList = (ListView)findViewById(R.id.my_places_list);
+            myPlacesList.setAdapter(new ArrayAdapter<MyPlace>(this, android.R.layout.simple_list_item_1,MyPlacesData.getInstance().getMyPlaces()));
+        }
     }
 
     @Override
@@ -120,7 +124,24 @@ public class MyPlacesList extends AppCompatActivity {
             i.putExtras(positionBundle);
             startActivityForResult(i, 1);
         }
+        else if(item.getItemId() == 3){
+            MyPlacesData.getInstance().deletePlace(info.position);
+            setList();
+        }
+        else if(item.getItemId() == 4){
+            i = new Intent(this,MyPlacesMapsActivity.class);
+            i.putExtra("state", MyPlacesMapsActivity.CENTER_PLACE_ON_MAP);
+            MyPlace myPlace = MyPlacesData.getInstance().getPlace(info.position);
+            i.putExtra("lat", myPlace.getLatitude());
+            i.putExtra("lon", myPlace.getLongitude());
+            startActivityForResult(i, 2);
+        }
         return super.onContextItemSelected(item);
+    }
+
+    private void setList(){
+        ListView myPlacesList = (ListView) findViewById(R.id.my_places_list);
+        myPlacesList.setAdapter(new ArrayAdapter<MyPlace>(this, android.R.layout.simple_list_item_1, MyPlacesData.getInstance().getMyPlaces()));
     }
 
 }
