@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "635832908683",
+    "firebase_url": "https://myplaces-43906.firebaseio.com",
+    "project_id": "myplaces-43906",
+    "storage_bucket": "myplaces-43906.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635832908683:android:ff7717d5053c23e9fd4d8e",
+        "android_client_info": {
+          "package_name": "zeljkobalanovic.mosis.elfak.rs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635832908683-3rf2lq2sphbd0i9rrilp33p9h9elodkp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbwXJC8ZAU_nsMDCWuaZDbrmwveCycZJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635832908683-3rf2lq2sphbd0i9rrilp33p9h9elodkp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

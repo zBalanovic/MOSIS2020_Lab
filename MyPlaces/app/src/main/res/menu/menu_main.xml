@@ -23,4 +23,8 @@
         android:title="@string/about"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_info_outline_white_24dp"/>
+    <item android:id="@+id/logout_item"
+        android:orderInCategory="100"
+        android:title="LogOut"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -1,7 +1,11 @@
 package zeljkobalanovic.mosis.elfak.rs;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,18 +18,34 @@ import android.os.strictmode.IntentReceiverLeakedViolation;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
 
-
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        if(!sharedPreferences.getBoolean("isLogged", false)){
+            Intent i = new Intent(MainActivity.this, GetStartedActivity.class);
+            startActivity(i);
+            finish();
+        }
+        //Koristimo broadcast da bi zatvorili (finish) sve Avtivity-je koji su bili otvoreni a ne bis smeli ostati kad se izlogujemo
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -35,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(i, NEW_PLACE);
             }
         });
+
+
     }
 
     @Override
@@ -66,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         } else if(id == R.id.about_item){
             Intent i = new Intent(this, About.class);
+            startActivity(i);
+        } else if(id == R.id.logout_item){
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction("ACTION_LOGOUT");
+            sendBroadcast(broadcastIntent);
+            sharedPreferences.edit().putBoolean("isLogged", false).apply();
+            Intent i = new Intent(MainActivity.this, GetStartedActivity.class);
             startActivity(i);
         }
 

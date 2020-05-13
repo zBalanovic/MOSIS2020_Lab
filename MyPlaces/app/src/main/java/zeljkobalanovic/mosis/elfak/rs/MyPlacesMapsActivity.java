@@ -3,8 +3,10 @@ package zeljkobalanovic.mosis.elfak.rs;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -77,6 +79,16 @@ public class MyPlacesMapsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_places_maps);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Koristimo broadcast da bi zatvorili (finish) sve Avtivity-je koji su bili otvoreni a ne bis smeli ostati kad se izlogujemo
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         if(state != SELECT_COORDINATES){
@@ -260,8 +272,8 @@ public class MyPlacesMapsActivity extends AppCompatActivity {
         final ArrayList<OverlayItem> items = new ArrayList<>();
         for(int i = 0; i< MyPlacesData.getInstance().getMyPlaces().size(); i++){
             MyPlace myPlace = MyPlacesData.getInstance().getMyPlaces().get(i);
-            OverlayItem item = new OverlayItem(myPlace.getName(), myPlace.getDescription(),
-                    new GeoPoint(Double.parseDouble(myPlace.getLatitude()), Double.parseDouble(myPlace.getLongitude())));
+            OverlayItem item = new OverlayItem(myPlace.name, myPlace.description,
+                    new GeoPoint(Double.parseDouble(myPlace.latitude), Double.parseDouble(myPlace.longitude)));
             item.setMarker(this.getResources().getDrawable(R.drawable.my_place_blue));
             items.add(item);
         }

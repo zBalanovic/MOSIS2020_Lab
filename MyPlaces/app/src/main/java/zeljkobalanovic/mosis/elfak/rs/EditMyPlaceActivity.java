@@ -1,7 +1,10 @@
 package zeljkobalanovic.mosis.elfak.rs;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -62,13 +65,13 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
         }else if(position >= 0){
             finishedButton.setText("Save");
             MyPlace place = MyPlacesData.getInstance().getPlace(position);
-            nameEditText.setText(place.getName());
+            nameEditText.setText(place.name);
             EditText descEditText = (EditText)findViewById(R.id.editmyplace_desc_edit);
-            descEditText.setText(place.getDescription());
+            descEditText.setText(place.description);
             EditText latEditText = (EditText) findViewById(R.id.editmyplace_lat_edit);
-            latEditText.setText(place.getLatitude());
+            latEditText.setText(place.latitude);
             EditText lonEditText = (EditText) findViewById(R.id.editmyplace_lon_edit);
-            lonEditText.setText(place.getLongitude());
+            lonEditText.setText(place.longitude);
         }
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -88,6 +91,16 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
         });
         Button locationButton = (Button) findViewById(R.id.editmyplace_location_button);
         locationButton.setOnClickListener(this);
+
+        //Koristimo broadcast da bi zatvorili (finish) sve Avtivity-je koji su bili otvoreni a ne bis smeli ostati kad se izlogujemo
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
     }
 
     @Override
@@ -104,15 +117,11 @@ public class EditMyPlaceActivity extends AppCompatActivity implements View.OnCli
                 String lon = lonEdit.getText().toString();
                 if(!editMode){
                     MyPlace place = new MyPlace(nme, desc);
-                    place.setLatitude(lat);
-                    place.setLongitude(lon);
+                    place.latitude = lat;
+                    place.longitude = lon;
                     MyPlacesData.getInstance().addNewPlace(place);
                 } else {
-                    MyPlace place = MyPlacesData.getInstance().getPlace(position);
-                    place.setName(nme);
-                    place.setDescription(desc);
-                    place.setLongitude(lon);
-                    place.setLatitude(lat);
+                    MyPlacesData.getInstance().updatePlace(position, nme, desc, lon, lat);
                 }
                 setResult(Activity.RESULT_OK);
                 finish();

@@ -1,7 +1,10 @@
 package zeljkobalanovic.mosis.elfak.rs;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,6 +34,16 @@ public class MyPlacesList extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        //Koristimo broadcast da bi zatvorili (finish) sve Avtivity-je koji su bili otvoreni a ne bis smeli ostati kad se izlogujemo
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +71,7 @@ public class MyPlacesList extends AppCompatActivity {
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
                 MyPlace place = MyPlacesData.getInstance().getPlace((info.position));
-                menu.setHeaderTitle(place.getName());
+                menu.setHeaderTitle(place.name);
                 menu.add(0,1,1, "View place");
                 menu.add(0, 2, 2, "Edit place");
                 menu.add(0, 3, 3, "Delete place");
@@ -132,8 +145,8 @@ public class MyPlacesList extends AppCompatActivity {
             i = new Intent(this,MyPlacesMapsActivity.class);
             i.putExtra("state", MyPlacesMapsActivity.CENTER_PLACE_ON_MAP);
             MyPlace myPlace = MyPlacesData.getInstance().getPlace(info.position);
-            i.putExtra("lat", myPlace.getLatitude());
-            i.putExtra("lon", myPlace.getLongitude());
+            i.putExtra("lat", myPlace.latitude);
+            i.putExtra("lon", myPlace.longitude);
             startActivityForResult(i, 2);
         }
         return super.onContextItemSelected(item);
